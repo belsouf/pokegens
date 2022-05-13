@@ -10,7 +10,7 @@ const Home: NextPage = () => {
           <div className="lg:text-center">
             <img
               className="h-80 w-auto lg:mx-auto"
-              src="https://media.moddb.com/images/games/1/68/67371/Logo.png"
+              src="logo-intro.png"
               alt="Pokégens"
             />
             <p

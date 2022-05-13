@@ -1,15 +1,11 @@
 import axios from "axios";
 import Link from "next/link";
 import { useQuery } from "react-query";
+import { fetchPokemon } from "../../pages/api";
 
 interface PokemonCardProps {
   name: string;
 }
-
-const fetchPokemon = (id: string) =>
-  axios
-    .get(`https://pokeapi.co/api/v2/pokemon/${id}`)
-    .then((response: any) => response.data);
 
 const PokemonCard: React.FC<PokemonCardProps> = ({
   name,

@@ -1,22 +1,18 @@
 import React from "react";
 import type { NextPage } from "next";
 import Link from "next/link";
-import axios from "axios";
 import { useQuery } from "react-query";
 import { IGeneration } from "../../src/interfaces/IGeneration";
 import Layout from "../../src/components/Layout";
 import Spinner from "../../src/components/Spinner";
+import { fetchGenerations } from "../api";
 
-const fetchGenerations = () =>
-  axios
-    .get("https://pokeapi.co/api/v2/generation")
-    .then((response: any) => response.data);
-
-const Generations: NextPage = () => {
+const Generations: NextPage = ({ generations }: any) => {
   const { isSuccess, data, isLoading, isError } = useQuery(
     ["getGenerations"],
     () => fetchGenerations(),
     {
+      initialData: generations,
       staleTime: Infinity,
     }
   );
@@ -70,5 +66,10 @@ const Generations: NextPage = () => {
     </Layout>
   );
 };
+
+export async function getStaticProps() {
+  const generations = await fetchGenerations();
+  return { props: { generations } };
+}
 
 export default Generations;

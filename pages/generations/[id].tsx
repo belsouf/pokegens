@@ -1,42 +1,36 @@
+import { useState } from "react";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import axios from "axios";
 import { useQuery } from "react-query";
+import Link from "next/link";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import Layout from "../../src/components/Layout";
 import PokemonCard from "../../src/components/PokemonCard";
 import Spinner from "../../src/components/Spinner";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { fetchGenerations, fetchGeneration } from "../api";
 
-const fetchGeneration = (id: string) =>
-  axios
-    .get(`https://pokeapi.co/api/v2/generation/${id}`)
-    .then(({ data }) => data);
-
-const Generation: NextPage = () => {
+const Generation: NextPage = ({ generation }: any) => {
   const router = useRouter();
   const id = typeof router.query?.id === "string" ? router.query.id : "";
 
-  const [pokemons, setPokemons] = useState([]);
   const [index, setIndex] = useState(0);
+  const [pokemons, setPokemons] = useState(
+    generation?.pokemon_species.slice(index, 8) || []
+  );
 
   const { isSuccess, data, isLoading, isError } = useQuery(
     ["getGeneration", id],
     () => fetchGeneration(id),
     {
+      initialData: generation,
       enabled: !!id,
-      staleTime: Infinity,
+      staleTime: 900000000000000000,
       onSuccess: (data: any) => {
         setPokemons(data?.pokemon_species.slice(index, 8));
         setIndex(8);
       },
     }
   );
-
-  useEffect(() => {
-    console.log(pokemons);
-  }, [pokemons]);
 
   const renderResult = () => {
     if (isLoading) {
@@ -118,5 +112,20 @@ const Generation: NextPage = () => {
     </Layout>
   );
 };
+
+export async function getStaticPaths() {
+  const generations = await fetchGenerations();
+
+  const paths = generations?.results.map((gen: any) => ({
+    params: { id: gen.name },
+  }));
+
+  return { paths, fallback: false };
+}
+
+export async function getStaticProps({ params }: any) {
+  const generation = await fetchGeneration(params.id);
+  return { props: { generation } };
+}
 
 export default Generation;

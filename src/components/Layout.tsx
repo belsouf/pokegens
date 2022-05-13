@@ -58,15 +58,18 @@ const Layout: React.FC<LayoutProps> = ({ children }: LayoutProps) => {
                     </Disclosure.Button>
                   </div>
                   <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
-                    <div className="flex-shrink-0 flex items-center max-h-9">
+                    <div
+                      className="flex-shrink-0 flex items-center max-h-9"
+                      style={{ minWidth: 116 }}
+                    >
                       <img
                         className="block lg:hidden h-12 w-auto"
-                        src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/i/87044f58-c765-43c5-bc51-8613e3ac7ab1/ddew4m7-c69a2c41-518f-48ca-ba35-8ab1895464e0.png"
+                        src="/logo.png"
                         alt="Pokégens"
                       />
                       <img
                         className="hidden lg:block h-12 w-auto"
-                        src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/i/87044f58-c765-43c5-bc51-8613e3ac7ab1/ddew4m7-c69a2c41-518f-48ca-ba35-8ab1895464e0.png"
+                        src="/logo.png"
                         alt="Pokégens"
                       />
                     </div>

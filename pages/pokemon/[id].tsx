@@ -1,17 +1,12 @@
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import axios from "axios";
 import { useQuery } from "react-query";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import Layout from "../../src/components/Layout";
 import Spinner from "../../src/components/Spinner";
+import { fetchPokemon, fetchPokemons } from "../api";
 
-const fetchPokemon = (id: string) =>
-  axios
-    .get(`https://pokeapi.co/api/v2/pokemon/${id}`)
-    .then((response) => response.data);
-
-const Pokemon: NextPage = () => {
+const Pokemon: NextPage = ({ pokemon }: any) => {
   const router = useRouter();
 
   const id = typeof router.query?.id === "string" ? router.query.id : "";
@@ -20,6 +15,7 @@ const Pokemon: NextPage = () => {
     ["getPokemon", id],
     () => fetchPokemon(id),
     {
+      initialData: pokemon,
       enabled: !!id,
       staleTime: Infinity,
     }
@@ -181,5 +177,20 @@ const Pokemon: NextPage = () => {
     </Layout>
   );
 };
+
+export async function getStaticPaths() {
+  const pokemons = await fetchPokemons();
+
+  const paths = pokemons?.results.map((pok: any) => ({
+    params: { id: pok.name },
+  }));
+
+  return { paths, fallback: false };
+}
+
+export async function getStaticProps({ params }: any) {
+  const pokemon = await fetchPokemon(params.id);
+  return { props: { pokemon } };
+}
 
 export default Pokemon;
