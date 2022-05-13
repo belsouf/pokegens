@@ -3,11 +3,11 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { useQuery } from "react-query";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
-import { IGeneration } from "../../src/interfaces/IGeneration";
 import Layout from "../../src/components/Layout";
 import PokemonCard from "../../src/components/PokemonCard";
 import Spinner from "../../src/components/Spinner";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const fetchGeneration = (id: string) =>
   axios
@@ -18,14 +18,25 @@ const Generation: NextPage = () => {
   const router = useRouter();
   const id = typeof router.query?.id === "string" ? router.query.id : "";
 
+  const [pokemons, setPokemons] = useState([]);
+  const [index, setIndex] = useState(0);
+
   const { isSuccess, data, isLoading, isError } = useQuery(
     ["getGeneration", id],
     () => fetchGeneration(id),
     {
       enabled: !!id,
       staleTime: Infinity,
+      onSuccess: (data: any) => {
+        setPokemons(data?.pokemon_species.slice(index, 8));
+        setIndex(8);
+      },
     }
   );
+
+  useEffect(() => {
+    console.log(pokemons);
+  }, [pokemons]);
 
   const renderResult = () => {
     if (isLoading) {
@@ -40,11 +51,32 @@ const Generation: NextPage = () => {
     }
     if (isSuccess) {
       return (
-        <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-          {data?.pokemon_species.map((pok: { name: string }, i: number) => (
-            <PokemonCard key={i} name={pok.name} />
-          ))}
-        </div>
+        <>
+          <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+            {pokemons.map((pok: { name: string }, i: number) => (
+              <PokemonCard key={i} name={pok.name} />
+            ))}
+          </div>
+
+          {data && pokemons.length < data.pokemon_species.length && (
+            <div className="mt-10 max-w-md text-xl text-gray-500 lg:mx-auto">
+              <div className="rounded-md shadow">
+                <button
+                  className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10"
+                  onClick={() => {
+                    setPokemons([
+                      ...pokemons,
+                      ...data.pokemon_species.slice(index, index + 8),
+                    ]);
+                    setIndex(index + 8);
+                  }}
+                >
+                  Afficher plus
+                </button>
+              </div>
+            </div>
+          )}
+        </>
       );
     }
     return <></>;

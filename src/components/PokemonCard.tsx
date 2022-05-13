@@ -23,10 +23,7 @@ const PokemonCard: React.FC<PokemonCardProps> = ({
       <div className="w-full min-h-80 bg-gray-200 aspect-w-1 aspect-h-1 rounded-md overflow-hidden group-hover:opacity-75 lg:h-80 lg:aspect-none">
         {data && (
           <img
-            src={
-              data.sprites.other.home.front_default ||
-              data.sprites.front_default
-            }
+            src={data.sprites.front_default}
             alt={name}
             className="w-full h-full object-center object-contain lg:w-full lg:h-full"
           />
