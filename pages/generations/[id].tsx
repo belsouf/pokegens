@@ -13,10 +13,10 @@ const Generation: NextPage = ({ generation }: any) => {
   const router = useRouter();
   const id = typeof router.query?.id === "string" ? router.query.id : "";
 
-  const [index, setIndex] = useState(0);
   const [pokemons, setPokemons] = useState(
-    generation?.pokemon_species.slice(index, 8) || []
+    generation?.pokemon_species.slice(0, 8) || []
   );
+  const [index, setIndex] = useState(generation ? 8 : 0);
 
   const { isSuccess, data, isLoading, isError } = useQuery(
     ["getGeneration", id],
